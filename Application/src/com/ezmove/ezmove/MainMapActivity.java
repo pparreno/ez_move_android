@@ -1,12 +1,15 @@
 package com.ezmove.ezmove;
 
 import android.os.Bundle;
-import android.app.Activity;import android.support.v4.app.ActionBarDrawerToggle;
+import android.app.Activity;import android.app.Fragment;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.app.SearchManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -160,5 +163,37 @@ public class MainMapActivity extends Activity {
         return super.onPrepareOptionsMenu(menu);
     }
 	
+    
+    public static class NavFragment extends Fragment {
+    	public static final String ARG_MENU_NUMBER = "menu_number";
+    	private int nav_fragment_type;
+    	
+    	public NavFragment(){}
+    	
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			// TODO Auto-generated method stub
+			int menu_arg = getArguments().getInt(ARG_MENU_NUMBER);
+			nav_fragment_type = this.findNavView(menu_arg);
+			View rootView = inflater.inflate(this.nav_fragment_type, container, false);
+			return rootView;
+		}
+		
+		private int findNavView(int menu_num)
+		{
+			int nav_id = -1;
+			switch(menu_num)
+			{
+				
+			}
+			
+			return nav_id;
+		}
+		
+    }
+    
+
     
 }

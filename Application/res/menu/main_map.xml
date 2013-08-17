@@ -6,6 +6,13 @@
         android:showAsAction="always"
         android:icon="@android:drawable/ic_menu_search"
         android:title="@string/action_settings"/>
+    
+    <item 
+        android:id="@+id/right_navdrawer"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_drawer"
+        android:title="Right navigation drawer"/>
        
 
 </menu>

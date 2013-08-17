@@ -7,6 +7,9 @@
     <string name="search_hint">Find a place..</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_search_results">SearchResultsActivity</string>
+    <string name="select_source_mode">Select Source Mode</string>
+    <string name="manual_mode">Manual</string>
+    <string name="auto_mode">Automatic</string>
     <string-array name="ez_move_trip_menu">
         <item>Current Trip</item>
         <item>New Trip</item>
