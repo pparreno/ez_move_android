@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">EZ Move</string>
+    <string name="app_name">EZ-MOVE</string>
     <string name="action_settings">Settings</string>
     <string name="search">Search</string>
     <string name="search_hint">Find a place..</string>
@@ -10,6 +10,7 @@
     <string name="select_source_mode">Select Source Mode</string>
     <string name="manual_mode">Manual</string>
     <string name="auto_mode">Automatic</string>
+    <string name="trip_details">Trip Details</string>
     <string-array name="ez_move_trip_menu">
         <item>Current Trip</item>
         <item>New Trip</item>
@@ -17,6 +18,12 @@
         <item>Routes</item>
         <item>Settings</item>
         <item>Help</item>
+    </string-array>
+        <string-array name="ez_move_current_trip">
+        <item>Cebu City Hall</item>
+        <item>Stop near Julie\'s Bakeshop</item>
+        <item>Stop in front of SOGO Hotel</item>
+        <item>Carbon Market</item>
     </string-array>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>

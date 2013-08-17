@@ -5,6 +5,7 @@ import android.app.Activity;import android.app.Fragment;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,24 +34,26 @@ public class MainMapActivity extends Activity {
 	  private GoogleMap map;
 	  
 	    private DrawerLayout mDrawerLayout;
-	    private ListView mDrawerList;
+	    private ListView mDrawerListLeft, mDrawerListRight;
 	    private ActionBarDrawerToggle mDrawerToggle;
+	    private boolean rightToggle = false;
 
 	    private CharSequence mDrawerTitle;
 	    private CharSequence mTitle;
 	    private String[] mMenuItems;
+	    private String[] mTripItems;
 
-	    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+	    private class LeftDrawerItemClickListener implements ListView.OnItemClickListener {
 	        @Override
 	        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-	            selectItem(position);
+	            selectLeftItem(position);
 	        }
 	    }  
 	    
-	    private void selectItem(int position) {
-	        mDrawerList.setItemChecked(position, true);
+	    private void selectLeftItem(int position) {
+	        mDrawerListLeft.setItemChecked(position, true);
 	        setTitle(mMenuItems[position]);
-	        mDrawerLayout.closeDrawer(mDrawerList);
+	        mDrawerLayout.closeDrawer(mDrawerListLeft);
 	    }
 	    
 	  @Override
@@ -60,13 +63,17 @@ public class MainMapActivity extends Activity {
 	    
 	    mTitle = mDrawerTitle = getTitle();
 	    mMenuItems = getResources().getStringArray(R.array.ez_move_trip_menu);
+	    mTripItems = getResources().getStringArray(R.array.ez_move_current_trip);
 	    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-	    mDrawerList = (ListView) findViewById(R.id.left_drawer);
+	    mDrawerListLeft = (ListView) findViewById(R.id.left_drawer);
+	    mDrawerListRight = (ListView) findViewById(R.id.right_drawer);
 	    
 	    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+        mDrawerListLeft.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.navdrawer_listitem, mMenuItems));
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        mDrawerListRight.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.navdrawer_listitem, mTripItems));
+        mDrawerListLeft.setOnItemClickListener(new LeftDrawerItemClickListener());
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
@@ -79,19 +86,26 @@ public class MainMapActivity extends Activity {
                 R.string.drawer_close  /* "close drawer" description for accessibility */
                 ) {
             public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
+            	if(rightToggle == true){
+            	rightToggle = false;
+            	mTitle = mDrawerTitle;
+            	}
+            	getActionBar().setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
+            	if(rightToggle == false){
+            	mDrawerTitle = getResources().getString(R.string.app_name);
+            	getActionBar().setTitle(mDrawerTitle);
+            	}
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);	
         
         if (savedInstanceState == null) {
-            selectItem(0);
+            selectLeftItem(0);
         }
         
 //	    map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
@@ -118,9 +132,24 @@ public class MainMapActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
         if (mDrawerToggle.onOptionsItemSelected(item)) {
+        	mDrawerLayout.closeDrawer(Gravity.END);
             return true;
         }
-		
+        else if(item.getItemId() == R.id.right_navdrawer){
+        	if(mDrawerLayout.isDrawerOpen(Gravity.END) == true){
+        		rightToggle = false;
+        		mTitle = mDrawerTitle;
+        		mDrawerLayout.closeDrawer(Gravity.END);
+        	}
+        	else{
+        		rightToggle = true;
+        		mDrawerTitle = mTitle;
+        		mTitle = getResources().getString(R.string.trip_details);
+        		mDrawerLayout.closeDrawer(Gravity.START);
+        		mDrawerLayout.openDrawer(Gravity.END);
+        		}
+        	getActionBar().setTitle(mTitle);
+        }
 		return super.onOptionsItemSelected(item);
 	}
 	
@@ -158,7 +187,7 @@ public class MainMapActivity extends Activity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerListLeft);
         //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
