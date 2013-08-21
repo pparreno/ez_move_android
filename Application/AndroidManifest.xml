@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ezmove.ezmove"
+    android:installLocation="preferExternal"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="18" />
-    <permission android:name="com.ezmove.ezmove.permission.MAPS_RECEIVE" android:protectionLevel="signature">
+
+    <permission
+        android:name="com.ezmove.ezmove.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" >
     </permission>
-    
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="com.ezmove.ezmove.permission.MAPS_RECEIVE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.ezmove.ezmove.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
-
+        android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
         <activity
             android:name="com.ezmove.ezmove.MainMapActivity"
             android:label="@string/app_name" >
@@ -32,18 +39,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity
-            android:name="com.ezmove.ezmove.SearchResultsActivity">
+        <activity android:name="com.ezmove.ezmove.SearchResultsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyC4CW6t6IWIA5gb3KAiZHdkOCMiwwClJYU" />
-        <!-- meta-data android:name="android.app.searchable"
-            android:resource="@xml/searchable" /-->
+            android:value="AIzaSyAeJuZpEYasbXM0k0warWshNqL8waD0GJ0" />
+        <!--
+             meta-data android:name="android.app.searchable"
+            android:resource="@xml/searchable" /
+        -->
+        <activity
+            android:name="com.ezmove.ezmove.NewTrip"
+            android:label="@string/title_activity_new_trip" >
+        </activity>
     </application>
 
 </manifest>

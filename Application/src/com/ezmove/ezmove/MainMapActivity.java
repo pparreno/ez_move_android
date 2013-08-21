@@ -1,7 +1,8 @@
 package com.ezmove.ezmove;
 
 import android.os.Bundle;
-import android.app.Activity;import android.app.Fragment;
+import android.app.Activity;
+import android.app.Fragment;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,7 +18,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,34 +33,68 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MainMapActivity extends Activity {
+public class MainMapActivity extends Activity implements LocationListener{
 
-	  static final LatLng HAMBURG = new LatLng(53.558, 9.927);
-	  static final LatLng KIEL = new LatLng(53.551, 9.993);
-	  private GoogleMap map;
+	  	private GoogleMap map;
+	  	private Location curLocation;
+	  	private Boolean initLoc = false;
 	  
 	    private DrawerLayout mDrawerLayout;
 	    private ListView mDrawerListLeft, mDrawerListRight;
 	    private ActionBarDrawerToggle mDrawerToggle;
 	    private boolean rightToggle = false;
+	    private int curAct;
 
 	    private CharSequence mDrawerTitle;
 	    private CharSequence mTitle;
 	    private String[] mMenuItems;
 	    private String[] mTripItems;
 
+	    private LocationManager mLocManager;
+	    private String locProvider;
+	    
 	    private class LeftDrawerItemClickListener implements ListView.OnItemClickListener {
 	        @Override
 	        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-	            selectLeftItem(position);
+	            System.out.println(curAct);
+	        	selectLeftItem(position);
 	        }
 	    }  
 	    
+	    
 	    private void selectLeftItem(int position) {
-	        mDrawerListLeft.setItemChecked(position, true);
-	        setTitle(mMenuItems[position]);
-	        mDrawerLayout.closeDrawer(mDrawerListLeft);
+	    	Intent nextAct = null;	
+	    	Boolean newAct = false;
+	    	System.out.println(position);
+	    	if(position != curAct){
+	    		switch(position){
+	    		case 0:
+	    			 break;
+	    		case 1:{
+	    			nextAct = new Intent(this, NewTrip.class);
+	    			newAct = true;
+	    			break;
+	    		}
+	    		default:;
+	    		}	
+	    	}
+	        if(newAct == true)
+	        {
+	        	finish();
+	        	startActivity(nextAct);
+	        }
+	        else
+	        {
+		        mDrawerListLeft.setItemChecked(position, true);
+		        setTitle(mMenuItems[position]);
+		        mDrawerLayout.closeDrawer(mDrawerListLeft);
+	        }
 	    }
+	    
+	   private LatLng setLatAndLng(Location loc){
+		   LatLng temp = new LatLng(loc.getLatitude(), loc.getLongitude());
+		   return temp;
+	   } 
 	    
 	  @Override
 	  protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +107,21 @@ public class MainMapActivity extends Activity {
 	    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 	    mDrawerListLeft = (ListView) findViewById(R.id.left_drawer);
 	    mDrawerListRight = (ListView) findViewById(R.id.right_drawer);
+	    
+	    
+	    mLocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+	    Criteria locCriteria = new Criteria();
+	    locCriteria.setAccuracy(Criteria.ACCURACY_FINE);
+	    locCriteria.setPowerRequirement(Criteria.POWER_LOW);
+	    locProvider = mLocManager.getBestProvider(locCriteria, true);
+	    curLocation = mLocManager.getLastKnownLocation(locProvider);
+	    
+	    if (curLocation != null) {
+	        onLocationChanged(curLocation);
+	     } 
+	    map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+		        .getMap();
+	    map.getUiSettings().setMyLocationButtonEnabled(true);
 	    
 	    mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         mDrawerListLeft.setAdapter(new ArrayAdapter<String>(this,
@@ -99,6 +154,7 @@ public class MainMapActivity extends Activity {
             	mDrawerTitle = getResources().getString(R.string.app_name);
             	getActionBar().setTitle(mDrawerTitle);
             	}
+	            curAct = mDrawerListLeft.getCheckedItemPosition();
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -108,26 +164,24 @@ public class MainMapActivity extends Activity {
             selectLeftItem(0);
         }
         
-//	    map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-//	        .getMap();
-//	    Marker hamburg = map.addMarker(new MarkerOptions().position(HAMBURG)
-//	        .title("Hamburg"));
-//	    Marker kiel = map.addMarker(new MarkerOptions()
-//	        .position(KIEL)
-//	        .title("Kiel")
-//	        .snippet("Kiel is cool")
-//	        .icon(BitmapDescriptorFactory
-//	            .fromResource(R.drawable.ic_launcher)));
-
-	    // Move the camera instantly to hamburg with a zoom of 15.
-//	    map.moveCamera(CameraUpdateFactory.newLatLngZoom(HAMBURG, 15));
-
-	    // Zoom in, animating the camera.
-//	    map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
 	  }
 
 	  
 	  
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		mLocManager.removeUpdates(this);
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		mLocManager.requestLocationUpdates(locProvider, (long)400, (float)1.0, this);
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
@@ -191,37 +245,35 @@ public class MainMapActivity extends Activity {
         //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
-	
-    
-    public static class NavFragment extends Fragment {
-    	public static final String ARG_MENU_NUMBER = "menu_number";
-    	private int nav_fragment_type;
-    	
-    	public NavFragment(){}
-    	
 
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			// TODO Auto-generated method stub
-			int menu_arg = getArguments().getInt(ARG_MENU_NUMBER);
-			nav_fragment_type = this.findNavView(menu_arg);
-			View rootView = inflater.inflate(this.nav_fragment_type, container, false);
-			return rootView;
-		}
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+		LatLng temp = setLatAndLng(location);
+		map.addMarker(new MarkerOptions()
+			.position(temp)
+			.title("You Are Here"));
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(temp, (float)15));
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
 		
-		private int findNavView(int menu_num)
-		{
-			int nav_id = -1;
-			switch(menu_num)
-			{
-				
-			}
-			
-			return nav_id;
-		}
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
 		
-    }
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		
+	}
+	
     
 
     

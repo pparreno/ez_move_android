@@ -11,6 +11,7 @@
     <string name="manual_mode">Manual</string>
     <string name="auto_mode">Automatic</string>
     <string name="trip_details">Trip Details</string>
+
     <string-array name="ez_move_trip_menu">
         <item>Current Trip</item>
         <item>New Trip</item>
@@ -19,13 +20,17 @@
         <item>Settings</item>
         <item>Help</item>
     </string-array>
-        <string-array name="ez_move_current_trip">
+    <string-array name="ez_move_current_trip">
         <item>Cebu City Hall</item>
         <item>Stop near Julie\'s Bakeshop</item>
         <item>Stop in front of SOGO Hotel</item>
         <item>Carbon Market</item>
     </string-array>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    
+    <string name="title_activity_new_trip_setup">New Trip</string>
+    <string name="next_button">Next</string>
+    <string name="title_activity_new_trip">New Trip</string>
+
 </resources>
